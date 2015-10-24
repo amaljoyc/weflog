@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, redirect, session, url_for
 from flask.ext.bootstrap import Bootstrap
 from flask.ext.moment import Moment
 from flask.ext.wtf import Form
@@ -26,12 +26,12 @@ def index():
 
 @app.route('/name-form', methods=['GET', 'POST'])
 def name_form():
-    name = None
     form = NameForm()
     if form.validate_on_submit():
-        name = form.name.data
-        form.name.data = ''
-    return render_template('name-form.html', form=form, name=name)
+        session['name'] = form.name.data
+        return redirect(url_for('name_form'))
+    return render_template(
+        'name-form.html', form=form, name=session.get('name'))
 
 
 @app.route('/<name>')
