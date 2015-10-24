@@ -2,6 +2,11 @@
 
 {% block title %}Weflog{% endblock %}
 
+{% block head %}
+{{ super() }}
+<link rel="icon" href="{{ url_for('static', filename = 'favicon.ico') }}" type="image/x-icon">
+{% endblock %}
+
 {% block navbar %}
 <div class="navbar navbar-inverse" role="navigation">
     <div class="container">
@@ -25,6 +30,8 @@
 
 {% block content %}
 <div class="container">
-    {% block page_content %}{% endblock %}
+    {% block page_content %}
+    <h1>Welcome to Weflog!</h1>
+    {% endblock %}
 </div>
 {% endblock %}
