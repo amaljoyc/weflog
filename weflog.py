@@ -1,17 +1,16 @@
-from flask import Flask
+from flask import Flask, render_template
 
 app = Flask(__name__)
 
 
 @app.route('/')
 def index():
-    return '<h1>Welcome to Weflog!</h1>'
+    return render_template('index.html')
 
 
 @app.route('/<name>')
-def hello_user(name):
-    welcome = index()
-    return welcome + '<h2>Hello %s...!!</h2>' % name
+def user(name):
+    return render_template('user.html', username=name)
 
 
 if __name__ == '__main__':
