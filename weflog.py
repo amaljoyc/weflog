@@ -15,7 +15,7 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'my_secret_k3y'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(
-    basedir, 'data.sqlite')
+    basedir, 'weflog.sqlite')
 app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN'] = True
 
 manager = Manager(app)
@@ -64,10 +64,15 @@ def index():
 def name_form():
     form = NameForm()
     if form.validate_on_submit():
-        old_name = session.get('name')
         session['name'] = form.name.data
-        if old_name is not None and session.get('name') != old_name:
-            flash('You have successfully changed your name.')
+        db_user = User.query.filter_by(username=session.get('name')).first()
+        if db_user is None:
+            db_user = User(username=session.get('name'))
+            db.session.add(db_user)
+            db.session.commit()
+            flash('You are a new user.')
+        else:
+            flash('You are an existing user.')
         return redirect(url_for('name_form'))
     return render_template(
         'name-form.html', form=form, name=session.get('name'))
@@ -84,4 +89,5 @@ def page_not_found(e):
 
 
 if __name__ == '__main__':
+    db.create_all()  # This will not run if the database is already created.
     manager.run()
